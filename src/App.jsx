@@ -60,8 +60,16 @@ const data = [
   }
 ]
 function App() {
-  const {basket, setBasket}= useState([])
+  const [basket, setBasket]= useState([])
+  const handleBasket=(name)=>{
+    const indexItem=data.findIndex((item)=>(item.name===name))
+    const newItem=data[indexItem]
+    newItem.tax=newItem.price
+    setBasket((prev) => [...prev, newItem])
+   
+  }
   return (
+    
     <>
       <Header />
       <Container className="my-5 pt-4">
@@ -79,12 +87,12 @@ function App() {
               price={item.price}
               category={item.category}
               image={item.image}
-              setBasket={setBasket}
+              onAddBasket={()=>handleBasket(item.name)}
             />
           ))}
         </Row>
         </Catalogue>
-        <Cart />
+        <Cart basket={basket} />
         <ReceiptButton/>
         <Receipt/>
       </Container>

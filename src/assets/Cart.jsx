@@ -1,8 +1,11 @@
 import { Col } from "react-bootstrap"
 import { Table } from "react-bootstrap"
 import { FaTrashAlt } from 'react-icons/fa'
-function Cart() {
-  const removeCartItem =()=>{}
+import PropTypes from 'prop-types'
+function Cart({basket}) {
+  const removeCartItem =()=>{
+    console.log('deleted')
+  }
   return (
     <>
       <h2 className="cart display-5 fw-bold mb-3">
@@ -21,11 +24,14 @@ function Cart() {
               </tr>
             </thead>
             <tbody className="table-group-divider" id="shopping-cart">
-              <tr>
-                <td className="fw-bold">$name</td>
+              {
+              
+                basket.map((item)=>(
+                <tr key={item.name}>
+                <td className="fw-bold">{item.name}</td>
                 <td>$isImported</td>
                 <td>
-                  $$12.44
+                  {'$'+item.price}
                   {/* {(parseFloat(price) + parseFloat(taxes)).toFixed(2)} */}
                 </td>
                 <td>$12.33{/*taxes.toFixed(2)*/}</td>
@@ -37,48 +43,16 @@ function Cart() {
                   <FaTrashAlt />
                 </td>
               </tr>
-              <tr>
-                <td className="fw-bold">Bottle of perfume</td>
-                <td>Yes</td>
-                <td>$50.04</td>
-                <td>$12.50</td>
-                <td
-                  onClick={removeCartItem}
-                  className="delete-button text-danger"
-                >
-                  <i className="fa-solid fa-trash-can"></i>
-                </td>
-              </tr>
-              <tr>
-                <td className="fw-bold">Bottle of perfume</td>
-                <td>Yes</td>
-                <td>$50.04</td>
-                <td>$12.50</td>
-                <td
-                  onClick={removeCartItem}
-                  className="delete-button text-danger"
-                >
-                  <i className="fa-solid fa-trash-can"></i>
-                </td>
-              </tr>
-              <tr>
-                <td className="fw-bold">Bottle of perfume</td>
-                <td>Yes</td>
-                <td>$50.04</td>
-                <td>$12.50</td>
-                <td
-                  onClick={removeCartItem}
-                  className="text-danger delete-button"
-                >
-                  <i className="fa-solid fa-trash-can"></i>
-                </td>
-              </tr>
+              ))}
             </tbody>
           </Table>
         </Col>
       </div>
     </>
   )
+}
+Cart.propTypes = {
+  basket: PropTypes.array.isRequired, 
 }
 
 export {Cart}
