@@ -3,10 +3,10 @@ import { Header } from './Header'
 import { Catalogue } from './Catalogue'
 import { Item } from './Item'
 import { Row } from 'react-bootstrap'
-import { Cart } from './assets/Cart'
+import { Cart } from './Cart'
 import { Container } from 'react-bootstrap'
 import { ReceiptButton } from './ReceiptButton'
-import { Receipt } from './assets/Receipt'
+import { Receipt } from './Receipt'
 import { useState } from 'react'
 const data = [
   {
@@ -57,44 +57,52 @@ const data = [
     category: 'other',
     image:
       'https://instilla-sales-tax-problem.s3.eu-central-1.amazonaws.com/c5.png',
-  }
+  },
 ]
+const calcTaxes = (item, imported) => {
+  let tax, importDuty
+  item.category === 'other' ? (tax = 10.0) : (tax = 0.0)
+  imported ? (importDuty = 5.0) : (importDuty = 0.0)
+  const totalFee = (parseFloat(item.price) * (importDuty + tax)) / 100
+  const roundedFee = Math.round(totalFee * 20) / 20
+  return roundedFee.toFixed(2)
+}
 function App() {
-  const [basket, setBasket]= useState([])
-  const handleBasket=(name)=>{
-    const indexItem=data.findIndex((item)=>(item.name===name))
-    const newItem=data[indexItem]
-    newItem.tax=newItem.price
+  const [basket, setBasket] = useState([])
+  const handleBasket = (name, imported) => {
+    const indexItem = data.findIndex((item) => item.name === name)
+    const newItem = { ...data[indexItem] }
+    const taxes = calcTaxes(newItem, imported)
+    newItem.taxes = taxes
+    newItem.price = (
+      parseFloat(newItem.price) + parseFloat(taxes)
+    ).toFixed(2)
+    newItem.imported = imported
     setBasket((prev) => [...prev, newItem])
-   
   }
   return (
-    
     <>
       <Header />
       <Container className="my-5 pt-4">
         <Catalogue>
-        <Row
-          xs={2}
-          md={3}
-          lg={4}
-          className="gy-5 gx-3 gx-md-5"
-        >
-          {data.map((item) => (
-            <Item
-              key={item.name}
-              name={item.name}
-              price={item.price}
-              category={item.category}
-              image={item.image}
-              onAddBasket={()=>handleBasket(item.name)}
-            />
-          ))}
-        </Row>
+          <Row xs={2} md={3} lg={4} className="gy-5 gx-3 gx-md-5">
+            {data.map((item) => (
+              <Item
+                key={item.name}
+                name={item.name}
+                price={item.price}
+                category={item.category}
+                image={item.image}
+                onAddBasket={(imported) =>
+                  handleBasket(item.name, imported)
+                }
+              />
+            ))}
+          </Row>
         </Catalogue>
         <Cart basket={basket} />
-        <ReceiptButton/>
-        <Receipt/>
+        <ReceiptButton />
+        <Receipt basket={basket} />
       </Container>
     </>
   )

@@ -24,26 +24,30 @@ function Cart({basket}) {
               </tr>
             </thead>
             <tbody className="table-group-divider" id="shopping-cart">
-              {
-              
-                basket.map((item)=>(
-                <tr key={item.name}>
-                <td className="fw-bold">{item.name}</td>
-                <td>$isImported</td>
-                <td>
-                  {'$'+item.price}
-                  {/* {(parseFloat(price) + parseFloat(taxes)).toFixed(2)} */}
-                </td>
-                <td>$12.33{/*taxes.toFixed(2)*/}</td>
-                <td
-                  onClick={removeCartItem}
-                  // onClick="removeCartItem(${i})"
-                  className="delete-button text-danger"
-                >
-                  <FaTrashAlt />
-                </td>
-              </tr>
-              ))}
+              {basket.length === 0 ? (
+                <tr className="col-12 text-end">
+                  <td className="fullwidth">Cart is Empty</td>
+                </tr>
+              ) : (
+                basket.map((item) => (
+                  <tr key={item.name}>
+                    <td className="fw-bold">{item.name}</td>
+                    <td>{item.imported?'Yes':'No' }</td>
+                    <td>
+                      {'$' + item.price}
+                      {/* {(parseFloat(price) + parseFloat(taxes)).toFixed(2)} */}
+                    </td>
+                    <td>{'$' + item.taxes}</td>
+                    <td
+                      onClick={removeCartItem}
+                      // onClick="removeCartItem(${i})"
+                      className="delete-button text-danger"
+                    >
+                      <FaTrashAlt />
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </Table>
         </Col>

@@ -1,6 +1,13 @@
 import { Col } from "react-bootstrap"
-import {Row} from "react-bootstrap"
-function Receipt() {
+import { Row } from "react-bootstrap"
+import PropTypes from 'prop-types'
+function Receipt({ basket }) {
+  const total = basket.reduce((accumulator, obj) => {
+    return accumulator + parseFloat(obj.price)
+  }, 0)
+  const totalTaxes = basket.reduce((accumulator, obj) => {
+    return accumulator + parseFloat(obj.taxes)
+  }, 0)
   return (
     <div className="d-flex justify-content-end mt-2">
       <Col
@@ -18,7 +25,7 @@ function Receipt() {
             <div className="fw-bold fs-5">Total amount</div>
           </Col>
           <Col>
-            <div id="total">$0.00</div>
+            <div id="total">{'$' + total.toFixed(2)}</div>
           </Col>
         </Row>
         <Row>
@@ -27,12 +34,15 @@ function Receipt() {
             <div className="fs-6">Including taxes</div>
           </Col>
           <Col>
-            <div id="taxes">$0.00</div>
+            <div id="taxes">{'$' + totalTaxes.toFixed(2)}</div>
           </Col>
         </Row>
       </Col>
     </div>
-   )
+  )
+}
+Receipt.propTypes = {
+  basket: PropTypes.array.isRequired,
 }
 
 export {Receipt}
