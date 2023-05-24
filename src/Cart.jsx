@@ -2,9 +2,9 @@ import { Col } from "react-bootstrap"
 import { Table } from "react-bootstrap"
 import { FaTrashAlt } from 'react-icons/fa'
 import PropTypes from 'prop-types'
-function Cart({basket}) {
-  const removeCartItem =()=>{
-    console.log('deleted')
+function Cart({basket,onDelete}) {
+  const removeCartItem =(name)=>{
+    onDelete(name)
   }
   return (
     <>
@@ -26,7 +26,7 @@ function Cart({basket}) {
             <tbody className="table-group-divider" id="shopping-cart">
               {basket.length === 0 ? (
                 <tr className="col-12 text-end">
-                  <td className="fullwidth">Cart is Empty</td>
+                  <td colSpan={12} className="fullwidth text-center">Cart is Empty</td>
                 </tr>
               ) : (
                 basket.map((item) => (
@@ -39,7 +39,7 @@ function Cart({basket}) {
                     </td>
                     <td>{'$' + item.taxes}</td>
                     <td
-                      onClick={removeCartItem}
+                      onClick={()=>removeCartItem(item.name)}
                       // onClick="removeCartItem(${i})"
                       className="delete-button text-danger"
                     >
@@ -57,6 +57,7 @@ function Cart({basket}) {
 }
 Cart.propTypes = {
   basket: PropTypes.array.isRequired, 
+  onDelete: PropTypes.func.isRequired, 
 }
 
 export {Cart}

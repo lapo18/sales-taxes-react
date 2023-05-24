@@ -1,8 +1,6 @@
 import './App.scss'
 import { Header } from './Header'
 import { Catalogue } from './Catalogue'
-import { Item } from './Item'
-import { Row } from 'react-bootstrap'
 import { Cart } from './Cart'
 import { Container } from 'react-bootstrap'
 import { ReceiptButton } from './ReceiptButton'
@@ -59,6 +57,15 @@ const data = [
       'https://instilla-sales-tax-problem.s3.eu-central-1.amazonaws.com/c5.png',
   },
 ]
+
+const localBasket = localStorage.getItem('BASKET_V1')
+console.log(localBasket)
+let parsedBasket
+if (!localBasket)
+  parsedBasket = []
+else
+  parsedBasket = JSON.parse(localBasket)
+
 const calcTaxes = (item, imported) => {
   let tax, importDuty
   item.category === 'other' ? (tax = 10.0) : (tax = 0.0)
@@ -68,7 +75,8 @@ const calcTaxes = (item, imported) => {
   return roundedFee.toFixed(2)
 }
 function App() {
-  const [basket, setBasket] = useState([])
+  const [basket, setBasket] = useState(parsedBasket)
+  
   const handleBasket = (name, imported) => {
     const indexItem = data.findIndex((item) => item.name === name)
     const newItem = { ...data[indexItem] }
@@ -76,31 +84,41 @@ function App() {
     newItem.taxes = taxes
     newItem.price = (
       parseFloat(newItem.price) + parseFloat(taxes)
-    ).toFixed(2)
-    newItem.imported = imported
-    setBasket((prev) => [...prev, newItem])
+      ).toFixed(2)
+      newItem.imported = imported
+      setBasket((prev) => {
+      localStorage.setItem(
+        'BASKET_V1',
+        JSON.stringify([...prev, newItem])
+      )
+      return [...prev, newItem]
+    })
+  }
+
+  const handleDelete = (name) => {
+    const indexItem = basket.findIndex((item) => item.name === name)
+    console.log(indexItem)
+    const newBasket = [...basket]
+    newBasket.splice(indexItem, 1)
+    console.log(newBasket)
+    setBasket(newBasket)
+    localStorage.setItem('BASKET_V1', JSON.stringify(newBasket))
   }
   return (
     <>
       <Header />
       <Container className="my-5 pt-4">
-        <Catalogue>
-          <Row xs={2} md={3} lg={4} className="gy-5 gx-3 gx-md-5">
-            {data.map((item) => (
-              <Item
-                key={item.name}
-                name={item.name}
-                price={item.price}
-                category={item.category}
-                image={item.image}
-                onAddBasket={(imported) =>
-                  handleBasket(item.name, imported)
-                }
-              />
-            ))}
-          </Row>
-        </Catalogue>
-        <Cart basket={basket} />
+        <Catalogue
+          data={data}
+          onAddBasket={(name, imported) =>
+            handleBasket(name, imported)
+          }
+        />
+
+        <Cart
+          basket={basket}
+          onDelete={(name) => handleDelete(name)}
+        />
         <ReceiptButton />
         <Receipt basket={basket} />
       </Container>

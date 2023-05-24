@@ -17,7 +17,7 @@ function Header() {
           href="#"
           className="text-primary text-uppercase text-end text-wrap fw-bold"
         >
-          Sales Taxes
+          Sales Taxes Problem
         </Nav.Link>
       </Container>
     </Navbar>
